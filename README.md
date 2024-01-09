@@ -1,33 +1,60 @@
-# CSV Format Validator 🧐📊
+# File Validation 📁✅
 
-Welcome to the CSV Format Validator! This repository contains a simple Python script designed to make your life easier by quickly validating the format of your CSV files. 🚀
+This Python script, `FileValidator`, is designed to validate files based on metadata. It ensures that the file structure conforms to the specified rules.
 
-## What does this script do? 🤔
+## Usage 🚀
 
-This script performs a high-level check on your CSV files to ensure they meet certain basic format criteria. Don't worry, you don't need to be a programming expert to use it!
+To use the script, follow these steps:
 
-## How does it work? 🛠️
+1. Clone the repository:
 
-1. 📁 **Place your CSV files in the designated_files folder:**
-   Make sure the files you want to validate are in the "designated_files" folder within this repository.
+   ```bash 
+        git clone https://github.com/your-username/file-validation.git
+    ```
 
-2. 🚀 **Run the script:**
-   Simply execute the `csv_validator.py` script and watch it magically perform the validation.
+2. Navigate to the repository directory:
 
-3. ✅ **Check the results:**
-   The script will provide you with a straightforward report on the validity of your CSV files. It's that easy!
+   ```bash 
+        cd file-validation   
+    ```
 
-## Requirements 📋
+3. Run the script:
+    
+   ```bash 
+        cd file-validation
+    ```
 
-Ensure you have Python installed on your machine. If you don't have it yet, you can download it [here](https://www.python.org/downloads/).
+## Features 🌟
 
-## Contributions 🤝
+- Validates file existence and metadata consistency.
+- Checks column names, order, and structure.
 
-You are more than welcome to contribute to this project! If you have ideas to improve the script or add new features, simply fork the repository and submit a pull request. 🌟
 
-## Issues or Questions ❓
+## How to Use 🤔
 
-If you encounter any problems or have questions, feel free to open an issue. We're here to help. 😊
+1. Provide the path to your data file.
+2. Specify the metadata file containing validation rules.
 
-Thank you for using the CSV Format Validator! We hope it makes your experience with CSV files much more enjoyable. Happy coding! 🚀💻
+```python
+path = '../files/your_data_file.csv'
+metadata = '../metadata/your_metadata_file.yaml'
 
+file_val = FileValidator(path, metadata)
+
+metadata_dict = file_val._get_metadata_info()
+
+print(metadata_dict)
+
+print(file_val._header_validation())
+```
+
+## Dependencies 📦
+
+- Python 3.x
+- PyYAML Library
+
+## License 📜
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Feel free to contribute, report issues, or suggest improvements! 🙌
