@@ -1,0 +1,28 @@
+metadata:
+  file:
+    filename: survey_lung_cancer_yyyymmdd
+    extension: csv
+    separator: '|'
+    encoding: UTF-8
+  structure:
+    header: true
+    periodicity: mensual
+    num_columns: 16
+  columns:
+    - name: gender
+    - name: age
+    - name: smoking
+    - name: yellow_fingers
+    - name: anxiety
+    - name: peer_pressure
+    - name: chronic_disease
+    - name: fatigue
+    - name: allergy
+    - name: wheezing
+    - name: alcohol_consuming
+    - name: coughing
+    - name: shortness_of_breath
+    - name: swallowing_difficulty
+    - name: chest_pain
+    - name: lung_cancer
+

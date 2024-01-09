@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<metadata>
+    <file>
+        <filename>survey_lung_cancer_yyyymmdd</filename>
+        <extension>csv</extension>
+        <separator>|</separator>
+        <encoding>UTF-8</encoding>
+    </file>
+    <structure>
+        <header>true</header>
+        <periodicity>mensual</periodicity>
+        <num_columns>16</num_columns>
+    </structure>
+    <columns>
+        <column name="gender"/>
+        <column name="age"/>
+        <column name="smoking"/>
+        <column name="yellow_fingers"/>
+        <column name="anxiety"/>
+        <column name="peer_pressure"/>
+        <column name="chronic_disease"/>
+        <column name="fatigue"/>
+        <column name="allergy"/>
+        <column name="wheezing"/>
+        <column name="alcohol_consuming"/>
+        <column name="coughing"/>
+        <column name="shortness_of_breath"/>
+        <column name="swallowing_difficulty"/>
+        <column name="chest_pain"/>
+        <column name="lung_cancer"/>
+    </columns>
+</metadata>
