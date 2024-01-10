@@ -66,7 +66,7 @@ To use the script, follow these steps:
     - Adjust the separator in the metadata file based on your data file's structure.
 
 
-## Example 💡
+## Example
 
 Here's an example using the provided data file and metadata:
 
