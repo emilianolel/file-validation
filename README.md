@@ -70,24 +70,24 @@ To use the script, follow these steps:
 
 Here's an example using the provided data file and metadata:
 
-    ```python
+```python
+# Paths to the data file and metadata file
+data_file_path = 'path/to/your/data/file.csv'
+metadata_file_path = 'path/to/your/metadata/file.yaml'
 
-    # Paths to the data file and metadata file
-    data_file_path = 'path/to/your/data/file.csv'
-    metadata_file_path = 'path/to/your/metadata/file.yaml'
+# Read the data file into a pandas DataFrame
+df = pd.read_csv(data_file_path, sep='|')
 
-    # Read the data file into a pandas DataFrame
-    df = pd.read_csv(data_file_path, sep='|')
+# Instantiate and validate using the FileValidator
+file_validator = FileValidator(data_file_path, metadata_file_path)
 
-    # Instantiate and validate using the FileValidator
-    file_validator = FileValidator(data_file_path, metadata_file_path)
+try:
+    file_validator.validation()
+    print("Validation successful!")
+except ValueError as ve:
+    print(f"Validation failed: {ve}")
 
-    try:
-        file_validator.validation()
-        print("Validation successful!")
-    except ValueError as ve:
-        print(f"Validation failed: {ve}")
-    ```
+```
 
 ## Dependencies 📦
 
