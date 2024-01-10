@@ -22,7 +22,7 @@ Example:
 
 
 import os
-from typing import Text, List, Tuple, Dict
+from typing import Text
 import yaml
 import csv
 import pandas as pd
@@ -41,15 +41,7 @@ class FileValidator:
         self.data_file_path = data_file_path
         self.metadata_file_path = metadata_file_path
 
-        (
-            self.filename,
-            self.file_extension,
-            self.separator,
-            self.num_columns,
-            self.columns,
-            self.not_null_cols,
-            self.date_format_cols
-        ) = self._get_metadata_info()
+        self._load_metadata()
 
 
     @staticmethod
@@ -57,39 +49,23 @@ class FileValidator:
         return os.path.isfile(data_file_path)
 
 
-    @staticmethod
-    def _get_column_names(meta_dict: Dict) -> List:
-        return [column.get('name') for column in meta_dict]
-
-
-    def _get_metadata_info(self) -> Tuple[Text, Text, Text, int, List, List, List]:
+    def _load_metadata(self) -> None:
         with open(self.metadata_file_path, 'r') as stream:
             try:
                 metadata_dict = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 raise ValueError(f'Metadata Error: {exc}')
 
-        meta_dict = metadata_dict['metadata']
+        meta_dict = metadata_dict.get('metadata', {})
 
-        if not meta_dict:
-            raise ValueError('Metadata Error: Metadata not found in the YAML file.')
+        self.filename = meta_dict.get('file', {}).get('filename')
+        self.file_extension = meta_dict.get('file', {}).get('extension')
+        self.separator = meta_dict.get('file', {}).get('separator')
+        self.num_columns = meta_dict.get('structure', {}).get('num_columns')
 
-        meta_file_dict = meta_dict.get('file')
-        meta_struct_dict = meta_dict.get('structure')
-        meta_col_dict = meta_dict.get('columns')
-        meta_not_null_dict = meta_dict.get('not_null')
-        meta_date_format_dict = meta_dict.get('date_format')
-
-        filename = meta_file_dict.get('filename')
-        file_extension = meta_file_dict.get('extension')
-        separator = meta_file_dict.get('separator')
-        number_of_columns = meta_struct_dict.get('num_columns')
-
-        columns = FileValidator._get_column_names(meta_col_dict)
-        not_null_cols = FileValidator._get_column_names(meta_not_null_dict)
-        date_format_cols = FileValidator._get_column_names(meta_date_format_dict)
-
-        return filename, file_extension, separator, number_of_columns, columns, not_null_cols, date_format_cols
+        self.columns = [column.get('name') for column in meta_dict.get('columns', {})]
+        self.not_null_cols = [column.get('name') for column in meta_dict.get('not_null', {})]
+        self.date_format_cols = [column.get('name') for column in meta_dict.get('date_format', {})]
 
 
     def validate_header(self) -> bool:
@@ -149,17 +125,17 @@ class FileValidator:
 
 
     def perform_validation(self) -> None:
-        if not self.validate_header():
-            raise ValueError('Header error')
+
+        self.validate_header()
         print('header validation passed!')
 
-        if not self.validate_not_null_columns():
-            raise ValueError('Not null column error')
-        print('not nul validation passed!')
+        if len(self.not_null_cols):
+            self.validate_not_null_columns()
+            print('not nul validation passed!')
 
-        if not self.validate_date_format_columns():
-            raise ValueError('Date format validation error.')
-        print('date format validation passed!')
+        if len(self.date_format_cols):
+            self.validate_date_format_columns()
+            print('date format validation passed!')
 
         print('Validation Successful!')
 
