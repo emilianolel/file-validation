@@ -32,21 +32,41 @@ To use the script, follow these steps:
 
 ## How to Use 🤔
 
-1. Provide the path to your data file.
-2. Specify the metadata file containing validation rules.
+## Usage
 
-```python
-path = '../files/your_data_file.csv'
-metadata = '../metadata/your_metadata_file.yaml'
+1. **Import the `FileValidator` class:**
 
-file_val = FileValidator(path, metadata)
+    ```python
+    from file_validator import FileValidator
+    ```
 
-metadata_dict = file_val._get_metadata_info()
+2. **Instantiate the `FileValidator` class:**
 
-print(metadata_dict)
+    ```python
+    # Provide the paths to the data file and metadata file
+    data_file_path = 'path/to/your/data/file.csv'
+    metadata_file_path = 'path/to/your/metadata/file.yaml'
 
-print(file_val._header_validation())
-```
+    file_validator = FileValidator(data_file_path, metadata_file_path)
+    ```
+
+3. **Perform Validation:**
+
+    To perform the validation, call the `validation` method:
+
+    ```python
+    try:
+        file_validator.validation()
+        print("Validation successful!")
+    except ValueError as ve:
+        print(f"Validation failed: {ve}")
+    ```
+
+4. **Customization:**
+
+    - Customize the paths to your data file and metadata file.
+    - Adjust the separator in the metadata file based on your data file's structure.
+
 
 ## Dependencies 📦
 

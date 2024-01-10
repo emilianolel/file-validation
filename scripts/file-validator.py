@@ -1,3 +1,26 @@
+"""
+FileValidator Class:
+
+This class is designed for validating data files based on metadata information. It performs checks on the structure of
+the data file, such as validating the header and ensuring specified columns do not contain null values. Metadata about
+the file structure is provided through a YAML file.
+
+Usage:
+- Instantiate the FileValidator class with paths to the data file and its corresponding metadata.
+- Call the 'validation' method to perform checks on the data file.
+
+Example:
+    path = '../files/survey_lung_cancer.csv'
+    metadata = '../metadata/survey_lung_cancer_metadata.yaml'
+
+    df = pd.read_csv(path, sep='|')
+
+    file_val = FileValidator(path, metadata)
+
+    file_val.validation()
+"""
+
+
 import os
 from typing import Text, List, Tuple, Dict
 import yaml
