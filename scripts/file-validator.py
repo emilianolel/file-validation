@@ -32,7 +32,7 @@ import numpy as np
 
 class FileValidator:
 
-    DATE_FORMAT = '^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+    DATE_FORMAT = '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[0-1])$'
 
     def __init__(self, data_file_path, metadata_file_path):
         if not self._data_file_exists(data_file_path):
