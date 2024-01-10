@@ -15,13 +15,13 @@ To use the script, follow these steps:
 2. Navigate to the repository directory:
 
    ```bash 
-    cd file-validation   
+    cd src/
     ```
 
 3. Run the script:
     
    ```bash 
-    cd file-validation
+    python3 file-validator.py
     ```
 
 ## Features 🌟
