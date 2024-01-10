@@ -9,19 +9,19 @@ To use the script, follow these steps:
 1. Clone the repository:
 
    ```bash 
-        git clone https://github.com/your-username/file-validation.git
+    git clone https://github.com/your-username/file-validation.git
     ```
 
 2. Navigate to the repository directory:
 
    ```bash 
-        cd file-validation   
+    cd file-validation   
     ```
 
 3. Run the script:
     
    ```bash 
-        cd file-validation
+    cd file-validation
     ```
 
 ## Features 🌟
@@ -70,7 +70,7 @@ To use the script, follow these steps:
 
 Here's an example using the provided data file and metadata:
 
-```python
+    ```python
     # Paths to the data file and metadata file
     data_file_path = 'path/to/your/data/file.csv'
     metadata_file_path = 'path/to/your/metadata/file.yaml'
@@ -86,7 +86,7 @@ Here's an example using the provided data file and metadata:
         print("Validation successful!")
     except ValueError as ve:
         print(f"Validation failed: {ve}")
-```
+    ```
 
 ## Dependencies 📦
 
