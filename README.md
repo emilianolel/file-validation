@@ -32,8 +32,6 @@ To use the script, follow these steps:
 
 ## How to Use 🤔
 
-## Usage
-
 1. **Import the `FileValidator` class:**
 
     ```python
@@ -67,6 +65,28 @@ To use the script, follow these steps:
     - Customize the paths to your data file and metadata file.
     - Adjust the separator in the metadata file based on your data file's structure.
 
+
+## Example 💡
+
+Here's an example using the provided data file and metadata:
+
+```python
+    # Paths to the data file and metadata file
+    data_file_path = 'path/to/your/data/file.csv'
+    metadata_file_path = 'path/to/your/metadata/file.yaml'
+
+    # Read the data file into a pandas DataFrame
+    df = pd.read_csv(data_file_path, sep='|')
+
+    # Instantiate and validate using the FileValidator
+    file_validator = FileValidator(data_file_path, metadata_file_path)
+
+    try:
+        file_validator.validation()
+        print("Validation successful!")
+    except ValueError as ve:
+        print(f"Validation failed: {ve}")
+```
 
 ## Dependencies 📦
 
