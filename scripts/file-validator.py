@@ -26,8 +26,13 @@ from typing import Text, List, Tuple, Dict
 import yaml
 import csv
 import pandas as pd
+import re
+import numpy as np
+
 
 class FileValidator:
+
+    DATE_FORMAT = '^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
 
     def __init__(self, data_file_path, metadata_file_path):
         if not self._data_file_exists(data_file_path):
@@ -42,7 +47,8 @@ class FileValidator:
             self.separator,
             self.num_columns,
             self.columns,
-            self.not_null_cols
+            self.not_null_cols,
+            self.date_format_cols
         ) = self._get_metadata_info()
 
 
@@ -56,7 +62,7 @@ class FileValidator:
         return [column.get('name') for column in meta_dict]
 
 
-    def _get_metadata_info(self) -> Tuple[Text, Text, Text, int, List, List]:
+    def _get_metadata_info(self) -> Tuple[Text, Text, Text, int, List, List, List]:
         with open(self.metadata_file_path, 'r') as stream:
             try:
                 metadata_dict = yaml.safe_load(stream)
@@ -72,6 +78,7 @@ class FileValidator:
         meta_struct_dict = meta_dict.get('structure')
         meta_col_dict = meta_dict.get('columns')
         meta_not_null_dict = meta_dict.get('not_null')
+        meta_date_format_dict = meta_dict.get('date_format')
 
         filename = meta_file_dict.get('filename')
         file_extension = meta_file_dict.get('extension')
@@ -80,8 +87,9 @@ class FileValidator:
 
         columns = FileValidator._get_column_names(meta_col_dict)
         not_null_cols = FileValidator._get_column_names(meta_not_null_dict)
+        date_format_cols = FileValidator._get_column_names(meta_date_format_dict)
 
-        return filename, file_extension, separator, number_of_columns, columns, not_null_cols
+        return filename, file_extension, separator, number_of_columns, columns, not_null_cols, date_format_cols
 
 
     def validate_header(self) -> bool:
@@ -122,17 +130,43 @@ class FileValidator:
         return True
 
 
+    @staticmethod
+    def _check_date_format(df: pd.DataFrame, column_name: Text) -> bool:
+        not_null_df = df[df[column_name].notnull()]
+        if not all(np.vectorize(lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x))))(not_null_df[column_name])):
+            raise ValueError(f'Date Format Error: The date format is incorrect.')
+
+        return True
+
+    
+    def validate_date_format_columns(self) -> bool:
+        df = pd.read_csv(self.data_file_path, sep=self.separator)
+        date_format_check = lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x)))
+        if not df[self.date_format_cols].map(date_format_check).all().all():
+            raise ValueError('Date Format Error: Incorrect date format in the specified columns.')
+
+        return True
+
+
     def perform_validation(self) -> None:
         if not self.validate_header():
             raise ValueError('Header error')
+        print('header validation passed!')
 
         if not self.validate_not_null_columns():
             raise ValueError('Not null column error')
+        print('not nul validation passed!')
+
+        if not self.validate_date_format_columns():
+            raise ValueError('Date format validation error.')
+        print('date format validation passed!')
 
         print('Validation Successful!')
 
 
 if __name__ == "__main__":
+
+
     data_file_path = '../files/survey_lung_cancer.csv'
     metadata_file_path = '../metadata/survey_lung_cancer_metadata.yaml'
 
@@ -141,4 +175,3 @@ if __name__ == "__main__":
     file_validator = FileValidator(data_file_path, metadata_file_path)
 
     file_validator.perform_validation()
-
