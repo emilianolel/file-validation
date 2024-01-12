@@ -29,7 +29,6 @@ import yaml
 import csv
 import pandas as pd
 import re
-import numpy as np
 
 
 class FileValidator:
@@ -111,7 +110,7 @@ class FileValidator:
     @staticmethod
     def _check_date_format(df: pd.DataFrame, column_name: Text) -> bool:
         not_null_df = df[df[column_name].notnull()]
-        if not all(np.vectorize(lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x))))(not_null_df[column_name])):
+        if all(map(lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x))), not_null_df[column_name])):
             raise ValueError(f'Date Format Error: The date format is incorrect.')
 
         return True
