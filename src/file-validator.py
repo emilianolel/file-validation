@@ -92,7 +92,7 @@ class FileValidator:
     @staticmethod
     def _check_not_null_column(df: pd.DataFrame, column_name: Text) -> bool:
         if any(df[column_name].isnull()):
-            raise ValueError(f'Not Null Error: There are null values in column {column_name}.')
+            print(f'Not Null Error: There are null values in column {column_name}.')
 
         return True
 
@@ -111,8 +111,9 @@ class FileValidator:
     def _check_date_format(df: pd.DataFrame, column_name: Text) -> bool:
         not_null_df = df[df[column_name].notnull()]
         if all(map(lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x))), not_null_df[column_name])):
-            raise ValueError(f'Date Format Error: The date format is incorrect.')
-
+            print(f'Date Format Error: The date format is incorrect.')
+            return False
+        
         return True
 
     
@@ -120,8 +121,9 @@ class FileValidator:
         df = pd.read_csv(self.data_file_path, sep=self.separator)
         date_format_check = lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x)))
         if not df[self.date_format_cols].map(date_format_check).all().all():
-            raise ValueError('Date Format Error: Incorrect date format in the specified columns.')
-
+            print('Date Format Error: Incorrect date format in the specified columns.')
+            return False
+        print('Date Format Validation Passed!')
         return True
 
 
@@ -136,9 +138,8 @@ class FileValidator:
 
         if len(self.date_format_cols):
             self.validate_date_format_columns()
-            print('date format validation passed!')
 
-        print('Validation Successful!')
+        print('Validation Finished!')
 
 
 if __name__ == "__main__":
