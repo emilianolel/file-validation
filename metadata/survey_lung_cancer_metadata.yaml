@@ -26,8 +26,11 @@ metadata:
     - name: CHEST_PAIN
     - name: LUNG_CANCER
     - name: DATE
+validations:
   not_null:
     - name: LUNG_CANCER
     - name: CHEST_PAIN
   date_format:
     - name: DATE
+    #  decimal_format:
+    #    - name: dec
