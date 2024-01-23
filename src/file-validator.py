@@ -28,7 +28,6 @@ from typing import Text, Dict, List, Tuple
 import yaml
 import csv
 import pandas as pd
-import re
 
 
 class FileValidator:
@@ -79,6 +78,10 @@ class FileValidator:
         self.not_null_cols = [column.get('name') for column in validation_dict.get('not_null', {})]
         self.date_format_cols = [column.get('name') for column in validation_dict.get('date_format', {})]
         self.string_length_cols_dict = [column.get('column') for column in validation_dict.get('string_length', {})]
+        
+        print(self.not_null_cols)
+        print(self.date_format_cols)
+        print(self.string_length_cols_dict)
 
 
     def validate_header(self) -> bool:
@@ -111,18 +114,12 @@ class FileValidator:
 
 
     def validate_date_format_columns(self) -> bool:
-        date_format_check = lambda x: (x, all(re.match(FileValidator.DATE_FORMAT, str(x))))
-        status = list(map(date_format_check, self.date_format_cols))
-        self._get_status(status)
+        print('DATE FORMAT COLUMNS VALIDATION STARTED')
+        _date_format_check = lambda x: (x, all(self.data_df[x].str.match(FileValidator.DATE_FORMAT)))
+        status = list(map(_date_format_check, self.date_format_cols))
+        return self._get_status(status)
     
     
-        if not self.data_df[self.date_format_cols].map(date_format_check).all().all():
-            print('Date Format Error: Incorrect date format in the specified columns.')
-            return False
-        print('Date Format Validation Passed!')
-        return True
-
-
     # @staticmethod
     # def _check_string_length(df: pd.DataFrame, col_info: Dict) -> bool:
     #     column = col_info.get('name')
@@ -132,9 +129,14 @@ class FileValidator:
     #     return True
 
 
-    # def validate_string_length_columns(self) -> bool:
-    #     df = pd.read_csv(self.data_file_path, sep=self.separator)
-    #     check_string
+    def validate_string_length_columns(self) -> bool:
+        print('STRING LENGTH COLUMNS VALIDATION STARTED')
+        for col_info in self.string_length_cols_dict:
+            column = col_info.get('name')
+            length = col_info.get('length')
+            string_length_check = lambda x: len(x) <= length
+            print(self.data_df[column].map(string_length_check).all())
+        return True
 
 
     def perform_validation(self) -> None:
@@ -149,6 +151,10 @@ class FileValidator:
         if len(self.date_format_cols):
             self.validate_date_format_columns()
             print('date_format validation passed!') 
+
+        if len(self.string_length_cols_dict):
+            self.validate_string_length_columns()
+            print('string length validation passed!')
 
         print('Validation Finished!')
 
