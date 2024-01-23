@@ -32,5 +32,13 @@ validations:
     - name: CHEST_PAIN
   date_format:
     - name: DATE
+  string_length: 
+    - column: 
+        name: GENDER
+        length: 6
+    - column: 
+        name: AGE
+        length: 3
+      
     #  decimal_format:
     #    - name: dec

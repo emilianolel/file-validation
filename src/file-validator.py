@@ -24,7 +24,7 @@ Example:
 
 
 import os
-from typing import Text
+from typing import Text, Dict, List, Tuple
 import yaml
 import csv
 import pandas as pd
@@ -33,7 +33,7 @@ import re
 
 class FileValidator:
 
-    DATE_FORMAT = '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[0-1])$'
+    DATE_FORMAT = r'^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[0-1])$'
 
     def __init__(self, data_file_path, metadata_file_path):
         if not self._data_file_exists(data_file_path):
@@ -43,6 +43,16 @@ class FileValidator:
         self.metadata_file_path = metadata_file_path
 
         self._load_metadata()
+        self.data_df = pd.read_csv(data_file_path, sep=self.separator)
+
+
+    @staticmethod
+    def _get_status(processed_columms_status: List[Tuple]) -> bool:
+        status_list = []
+        for key, value in processed_columms_status:
+            print(f'Column: {key} -> Status: {value}')
+            status_list.append(value)
+        return all(status_list)
 
 
     @staticmethod
@@ -58,18 +68,21 @@ class FileValidator:
                 raise ValueError(f'Metadata Error: {exc}')
 
         meta_dict = metadata_dict.get('metadata', {})
+        validation_dict = metadata_dict.get('validations', {})
 
         self.filename = meta_dict.get('file', {}).get('filename')
         self.file_extension = meta_dict.get('file', {}).get('extension')
         self.separator = meta_dict.get('file', {}).get('separator')
         self.num_columns = meta_dict.get('structure', {}).get('num_columns')
-
         self.columns = [column.get('name') for column in meta_dict.get('columns', {})]
-        self.not_null_cols = [column.get('name') for column in meta_dict.get('not_null', {})]
-        self.date_format_cols = [column.get('name') for column in meta_dict.get('date_format', {})]
+
+        self.not_null_cols = [column.get('name') for column in validation_dict.get('not_null', {})]
+        self.date_format_cols = [column.get('name') for column in validation_dict.get('date_format', {})]
+        self.string_length_cols_dict = [column.get('column') for column in validation_dict.get('string_length', {})]
 
 
     def validate_header(self) -> bool:
+
         with open(self.data_file_path) as file:
             reader = csv.reader(file, delimiter=self.separator)
             header = next(reader)
@@ -89,42 +102,39 @@ class FileValidator:
         return True
 
 
-    @staticmethod
-    def _check_not_null_column(df: pd.DataFrame, column_name: Text) -> bool:
-        if any(df[column_name].isnull()):
-            print(f'Not Null Error: There are null values in column {column_name}.')
-
-        return True
-
-
     def validate_not_null_columns(self) -> bool:
-        df = pd.read_csv(self.data_file_path, sep=self.separator)
+        print('NOT NULL COLUMNS VALIDATION STARTED')
+        _check_not_null_values = lambda x: (x, not any(self.data_df[x].isnull()))
+        status = list(map(_check_not_null_values, self.not_null_cols))
 
-        for column in self.not_null_cols:
-            if not FileValidator._check_not_null_column(df, column):
-                return False
-
-        return True
+        return self._get_status(status)
 
 
-    @staticmethod
-    def _check_date_format(df: pd.DataFrame, column_name: Text) -> bool:
-        not_null_df = df[df[column_name].notnull()]
-        if all(map(lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x))), not_null_df[column_name])):
-            print(f'Date Format Error: The date format is incorrect.')
-            return False
-        
-        return True
-
-    
     def validate_date_format_columns(self) -> bool:
-        df = pd.read_csv(self.data_file_path, sep=self.separator)
-        date_format_check = lambda x: bool(re.match(FileValidator.DATE_FORMAT, str(x)))
-        if not df[self.date_format_cols].map(date_format_check).all().all():
+        date_format_check = lambda x: (x, all(re.match(FileValidator.DATE_FORMAT, str(x))))
+        status = list(map(date_format_check, self.date_format_cols))
+        self._get_status(status)
+    
+    
+        if not self.data_df[self.date_format_cols].map(date_format_check).all().all():
             print('Date Format Error: Incorrect date format in the specified columns.')
             return False
         print('Date Format Validation Passed!')
         return True
+
+
+    # @staticmethod
+    # def _check_string_length(df: pd.DataFrame, col_info: Dict) -> bool:
+    #     column = col_info.get('name')
+    #     length = col_info.get('length')
+    #     string_length_check = lambda x: len(x) <= length
+    #     print(df[column].map(string_length_check).all())
+    #     return True
+
+
+    # def validate_string_length_columns(self) -> bool:
+    #     df = pd.read_csv(self.data_file_path, sep=self.separator)
+    #     check_string
 
 
     def perform_validation(self) -> None:
@@ -134,10 +144,11 @@ class FileValidator:
 
         if len(self.not_null_cols):
             self.validate_not_null_columns()
-            print('not nul validation passed!')
+            print('not null validation passed!')
 
         if len(self.date_format_cols):
             self.validate_date_format_columns()
+            print('date_format validation passed!') 
 
         print('Validation Finished!')
 
