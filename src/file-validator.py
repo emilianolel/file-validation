@@ -1,4 +1,4 @@
-#!../file-validation-venv/bin/python
+#!../.venv/bin/python
 
 """
 FileValidator Class:
@@ -23,6 +23,7 @@ Example:
 """
 
 
+
 import os
 from typing import Text, Dict, List, Tuple
 import yaml
@@ -30,7 +31,9 @@ import csv
 import pandas as pd
 
 
+
 class FileValidator:
+
 
     DATE_FORMAT = r'^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[0-1])$'
 
@@ -79,10 +82,6 @@ class FileValidator:
         self.date_format_cols = [column.get('name') for column in validation_dict.get('date_format', {})]
         self.string_length_cols_dict = [column.get('column') for column in validation_dict.get('string_length', {})]
         
-        print(self.not_null_cols)
-        print(self.date_format_cols)
-        print(self.string_length_cols_dict)
-
 
     def validate_header(self) -> bool:
 
@@ -106,6 +105,7 @@ class FileValidator:
 
 
     def validate_not_null_columns(self) -> bool:
+
         print('NOT NULL COLUMNS VALIDATION STARTED')
         _check_not_null_values = lambda x: (x, not any(self.data_df[x].isnull()))
         status = list(map(_check_not_null_values, self.not_null_cols))
@@ -114,6 +114,7 @@ class FileValidator:
 
 
     def validate_date_format_columns(self) -> bool:
+        
         print('DATE FORMAT COLUMNS VALIDATION STARTED')
         _date_format_check = lambda x: (x, all(self.data_df[x].str.match(FileValidator.DATE_FORMAT)))
         status = list(map(_date_format_check, self.date_format_cols))
@@ -130,33 +131,36 @@ class FileValidator:
 
 
     def validate_string_length_columns(self) -> bool:
+
         print('STRING LENGTH COLUMNS VALIDATION STARTED')
+        status_list = []
         for col_info in self.string_length_cols_dict:
             column = col_info.get('name')
             length = col_info.get('length')
-            string_length_check = lambda x: len(x) <= length
-            print(self.data_df[column].map(string_length_check).all())
-        return True
+            _string_length_check = all(self.data_df[column].map(lambda x: len(str(x)) <= length))
+            status_list.append((column, _string_length_check))
+        return self._get_status(status_list)
 
 
     def perform_validation(self) -> None:
 
         self.validate_header()
-        print('header validation passed!')
+        print('header validation passed!\n')
 
         if len(self.not_null_cols):
             self.validate_not_null_columns()
-            print('not null validation passed!')
+            print('not null validation passed!\n')
 
         if len(self.date_format_cols):
             self.validate_date_format_columns()
-            print('date_format validation passed!') 
+            print('date_format validation passed!\n') 
 
         if len(self.string_length_cols_dict):
             self.validate_string_length_columns()
-            print('string length validation passed!')
+            print('string length validation passed!\n')
 
         print('Validation Finished!')
+
 
 
 if __name__ == "__main__":
