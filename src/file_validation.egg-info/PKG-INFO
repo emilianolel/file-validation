@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: file-validation
+Version: 0.0.1
+Summary: Python module to validate csv files.
+Author-email: Emiliano Herrera <eherrera1331@gmail.com>
+Requires-Dist: pyyaml
+Requires-Dist: pandas
