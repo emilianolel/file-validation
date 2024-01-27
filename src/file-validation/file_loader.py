@@ -14,10 +14,14 @@ class FileLoader:
 
     def __init__(self, file: Text) -> None:
         self.file = file
-        self.type = file.split('.')[-1]
+        self.type = self.get_file_type()
 
         print('file type: ', self.type)
         print('file path: ', self.file)
+
+
+    def get_file_type(self):
+        return self.file.split('.')[-1]
 
     
     def validate_file_existance(self) -> bool:
