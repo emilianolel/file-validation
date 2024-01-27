@@ -162,14 +162,11 @@ class FileValidator:
         print('Validation Finished!')
 
 
-
 if __name__ == "__main__":
 
 
-    data_file_path = '../files/survey_lung_cancer.csv'
-    metadata_file_path = '../metadata/survey_lung_cancer_metadata.yaml'
-
-    df = pd.read_csv(data_file_path, sep='|')
+    data_file_path = '../tests/test_data/files/survey_lung_cancer.csv'
+    metadata_file_path = '../tests/test_data/metadata/survey_lung_cancer_metadata.yaml'
 
     file_validator = FileValidator(data_file_path, metadata_file_path)
 
